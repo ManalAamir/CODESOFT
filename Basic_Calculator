@@ -1,0 +1,52 @@
+from tkinter import *
+import math
+
+
+def click(value):
+    current_text = Result.get()
+    if value == "AC":
+        Result.delete(0, END)
+    elif value == "Del":
+        Result.delete(len(current_text) - 1)
+    elif value == "=":
+        try:
+            Result.delete(0, END)
+            Result.insert(0, str(eval(current_text)))
+        except:
+            Result.insert(0, "Error")
+    elif value == "√":
+        try:
+            Result.delete(0, END)
+            Result.insert(0, str(math.sqrt(eval(current_text))))
+        except:
+            Result.insert(0, "Error")
+    else:
+        Result.insert(END, value)
+
+
+m = Tk()
+m.title("Basic Calculator")
+m.configure(bg='Grey')
+m.geometry("500x400")
+
+Result = Entry(m, font=("Arial", 20), bg="White", fg="Black", bd=10, relief=SUNKEN, width=30)
+Result.grid(row=0, column=0, columnspan=4)
+
+button_list = ["AC", "Del", "√", "+",
+               "7", "8", "9", "-",
+               "4", "5", "6", "*",
+               "1", "2", "3", "/",
+               "0", ".", "%", "="]
+
+row_value = 1
+column_value = 0
+for i in button_list:
+    button = Button(m, width=10, height=2, bd=2, text=i, bg="Dark grey", fg="white",
+                    font=("arial", 15), command=lambda button=i: click(button))
+    button.grid(row=row_value, column=column_value, padx=2, pady=2)
+    column_value += 1
+    if column_value > 3:
+        row_value += 1
+        column_value = 0
+
+m.mainloop()
