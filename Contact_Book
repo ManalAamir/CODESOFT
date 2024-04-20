@@ -1,0 +1,138 @@
+import tkinter as tk
+from tkinter import messagebox
+
+contacts = []
+
+
+def add_contact():
+    name = name_entry.get()
+    phone = phone_entry.get()
+    email = email_entry.get()
+    address = address_entry.get()
+
+    if name or phone:
+        contacts.append({"name": name, "phone": phone, "email": email, "address": address})
+        clear_entries()
+        messagebox.showinfo("Success", "Contact added successfully!")
+    else:
+        messagebox.showerror("Error", "Name and phone number are required.")
+
+
+def view_contacts():
+    contacts_text.delete(1.0, tk.END)
+    for contact in contacts:
+        contacts_text.insert(tk.END, f"Name: {contact['name']}\n")
+        contacts_text.insert(tk.END, f"Phone: {contact['phone']}\n")
+        contacts_text.insert(tk.END, f"Email: {contact['email']}\n")
+        contacts_text.insert(tk.END, f"Address: {contact['address']}\n\n")
+
+
+def search_contact():
+    search_term = search_entry.get().lower()
+    if not search_term:
+        messagebox.showerror("Error", "Please enter a search term.")
+        return
+
+    search_results = []
+    for contact in contacts:
+        if search_term in contact["name"].lower() or search_term in contact["phone"]:
+            search_results.append(contact)
+
+    contacts_text.delete(1.0, tk.END)
+    if search_results:
+        for contact in search_results:
+            contacts_text.insert(tk.END, f"Name: {contact['name']}\n")
+            contacts_text.insert(tk.END, f"Phone: {contact['phone']}\n")
+            contacts_text.insert(tk.END, f"Email: {contact['email']}\n")
+            contacts_text.insert(tk.END, f"Address: {contact['address']}\n\n")
+    else:
+        contacts_text.insert(tk.END, "No matching contacts found.")
+
+
+def delete_contact():
+    selected_contact = contacts_text.get(tk.SEL_FIRST, tk.SEL_LAST)
+    if selected_contact:
+        for contact in contacts:
+            if f"Name: {contact['name']}" in selected_contact:
+                contacts.remove(contact)
+                messagebox.showinfo("Success", "Contact deleted successfully!")
+                view_contacts()
+                return
+    else:
+        messagebox.showerror("Error", "Please select a contact to delete.")
+
+
+def clear_entries():
+    name_entry.delete(0, tk.END)
+    phone_entry.delete(0, tk.END)
+    email_entry.delete(0, tk.END)
+    address_entry.delete(0, tk.END)
+
+
+def main():
+    root = tk.Tk()
+    root.title("Contact Book")
+    root.geometry("420x580")
+
+    # Set a background color for the window
+    root.configure(bg="#e0e0e0")
+
+    # Create a frame to hold the labels and entry fields
+    # with a nice border
+    form_frame = tk.Frame(root, relief=tk.GROOVE, borderwidth=2, bg="#fff")
+    form_frame.grid(row=0, column=0, padx=10, pady=10)
+
+    name_label = tk.Label(form_frame, text="Name:", bg="#fff")
+    name_label.grid(row=0, column=0, padx=5, pady=5)
+    global name_entry
+    name_entry = tk.Entry(form_frame, width=30)
+    name_entry.grid(row=0, column=1, padx=5, pady=5)
+
+    phone_label = tk.Label(form_frame, text="Phone:", bg="#fff")
+    phone_label.grid(row=1, column=0, padx=5, pady=5)
+    global phone_entry
+    phone_entry = tk.Entry(form_frame, width=30)
+    phone_entry.grid(row=1, column=1, padx=5, pady=5)
+
+    email_label = tk.Label(form_frame, text="Email:", bg="#fff")
+    email_label.grid(row=2, column=0, padx=5, pady=5)
+    global email_entry
+    email_entry = tk.Entry(form_frame, width=30)
+    email_entry.grid(row=2, column=1, padx=5, pady=5)
+
+    address_label = tk.Label(form_frame, text="Address:", bg="#fff")
+    address_label.grid(row=3, column=0, padx=5, pady=5)
+    global address_entry
+    address_entry = tk.Entry(form_frame, width=30)
+    address_entry.grid(row=3, column=1, padx=5, pady=5)
+
+    # Button to add a contact
+    add_button = tk.Button(root, text="Add Contact", command=add_contact)
+    add_button.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
+
+    # Button to view all contacts
+    view_button = tk.Button(root, text="View Contacts", command=view_contacts)
+    view_button.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
+
+    # Entry field and button for searching contacts
+    global search_entry
+    search_entry = tk.Entry(root, width=30)
+    search_entry.grid(row=3, column=0, padx=10, pady=5)
+
+    search_button = tk.Button(root, text="Search Contact", command=search_contact)
+    search_button.grid(row=4, column=0, padx=10, pady=5, sticky="ew")
+
+    # Button to delete a contact
+    delete_button = tk.Button(root, text="Delete Contact", command=delete_contact)
+    delete_button.grid(row=6, column=0, padx=10, pady=5, sticky="ew")
+
+    # Text area to display contacts
+    global contacts_text
+    contacts_text = tk.Text(root, width=50, height=15)
+    contacts_text.grid(row=5, column=0, padx=10, pady=5)
+
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
